@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DocPortal — Stop Chasing Clients for Documents</title>
+  <meta name="description" content="DocPortal gives solo bookkeepers a client-facing upload portal with automated reminders and a real-time missing-document dashboard. Built for 1-person practices." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500;1,600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green-50:  #E1F5EE;
+      --green-100: #9FE1CB;
+      --green-500: #1D9E75;
+      --green-600: #0F6E56;
+      --green-800: #085041;
+      --gray-50:   #F8F8F6;
+      --gray-100:  #F1EFE8;
+      --gray-200:  #E2E0D8;
+      --gray-500:  #888780;
+      --gray-800:  #2C2C2A;
+      --text:      #1A1A18;
+      --text-muted:#5F5E5A;
+      --text-hint: #888780;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #fff;
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Nav ── */
+    nav {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: 'Lora', serif;
+      font-weight: 600;
+      font-size: 18px;
+      color: var(--green-600);
+    }
+    .nav-cta {
+      font-size: 14px;
+      font-weight: 500;
+      background: var(--green-500);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      transition: background .15s;
+    }
+    .nav-cta:hover { background: var(--green-600); }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 64px 0 48px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      background: var(--green-50);
+      color: var(--green-800);
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--green-500);
+      border-radius: 50%;
+    }
+    h1 {
+      font-family: 'Lora', serif;
+      font-size: clamp(30px, 5vw, 44px);
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+      margin-bottom: 16px;
+    }
+    h1 em {
+      font-style: italic;
+      color: var(--green-500);
+    }
+    .hero-sub {
+      font-size: 18px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 520px;
+      margin-bottom: 32px;
+    }
+
+    /* ── Form ── */
+    .form-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .form-row input[type="email"] {
+      flex: 1;
+      min-width: 220px;
+      height: 48px;
+      padding: 0 16px;
+      font-size: 15px;
+      font-family: 'DM Sans', sans-serif;
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .form-row input[type="email"]:focus {
+      border-color: var(--green-500);
+      box-shadow: 0 0 0 3px rgba(29,158,117,.12);
+    }
+    .btn-primary {
+      height: 48px;
+      padding: 0 24px;
+      font-size: 15px;
+      font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--green-500);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s;
+    }
+    .btn-primary:hover { background: var(--green-600); }
+    .form-note {
+      font-size: 12px;
+      color: var(--text-hint);
+    }
+    .success-msg {
+      display: none;
+      font-size: 15px;
+      color: var(--green-800);
+      background: var(--green-50);
+      border: 1px solid var(--green-100);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+    }
+
+    /* ── Section spacing ── */
+    section { padding: 48px 0; }
+    .divider {
+      height: 1px;
+      background: var(--gray-200);
+    }
+
+    /* ── Quote ── */
+    .quote-block {
+      background: var(--gray-50);
+      border-left: 3px solid var(--green-500);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 18px 20px;
+    }
+    .quote-block p {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .quote-block p strong { color: var(--text); font-weight: 500; }
+    .quote-block .quote-source {
+      font-size: 12px;
+      color: var(--text-hint);
+      margin-top: 6px;
+    }
+
+    /* ── Section labels ── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-hint);
+      margin-bottom: 20px;
+    }
+
+    /* ── Feature grid ── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--gray-200);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    @media (max-width: 540px) {
+      .features { grid-template-columns: 1fr; }
+    }
+    .feature {
+      background: #fff;
+      padding: 20px;
+    }
+    .feature-icon {
+      width: 34px;
+      height: 34px;
+      background: var(--green-50);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .feature-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--green-600);
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .feature h3 {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .feature p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* ── Before/After ── */
+    .vs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 480px) {
+      .vs-grid { grid-template-columns: 1fr; }
+    }
+    .vs-card {
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      border: 1px solid var(--gray-200);
+    }
+    .vs-card.before { background: var(--gray-50); }
+    .vs-card.after  { background: var(--green-50); border-color: var(--green-100); }
+    .vs-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .vs-card.before .vs-label { color: var(--text-hint); }
+    .vs-card.after  .vs-label { color: var(--green-600); }
+    .vs-card ul { list-style: none; }
+    .vs-card li {
+      font-size: 13px;
+      line-height: 1.55;
+      padding: 4px 0;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .vs-card.before li { color: var(--text-muted); }
+    .vs-card.after  li { color: var(--green-800); }
+    .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 7px;
+    }
+    .vs-card.before .dot { background: var(--gray-500); }
+    .vs-card.after  .dot { background: var(--green-500); }
+
+    /* ── Pricing ── */
+    .pricing-card {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 36px 24px;
+      text-align: center;
+    }
+    .price-main {
+      font-family: 'Lora', serif;
+      font-size: 52px;
+      font-weight: 600;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .price-period {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .price-trial {
+      display: inline-block;
+      font-size: 12px;
+      background: var(--green-50);
+      color: var(--green-800);
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+    .price-includes {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.9;
+    }
+    .vs-competitors {
+      font-size: 12px;
+      color: var(--text-hint);
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    /* ── Footer CTA ── */
+    .footer-cta {
+      text-align: center;
+      padding: 56px 0 48px;
+    }
+    .footer-cta h2 {
+      font-family: 'Lora', serif;
+      font-size: 26px;
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+    .footer-cta .form-row {
+      justify-content: center;
+    }
+    .footer-cta .form-note {
+      margin-top: 10px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--gray-200);
+      padding: 20px 0;
+    }
+    footer .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    footer p {
+      font-size: 12px;
+      color: var(--text-hint);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <div class="container">
+    <span class="logo">DocPortal</span>
+    <a href="#waitlist" class="nav-cta">Get early access</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="container">
+    <div class="badge">Early access · waitlist open</div>
+    <h1>Stop chasing clients.<br><em>Let the system do it.</em></h1>
+    <p class="hero-sub">DocPortal gives solo bookkeepers a client-facing upload portal with automated reminders and a real-time missing-document dashboard. Built for 1-person practices.</p>
+
+    <div id="hero-form">
+      <div class="form-row" id="waitlist">
+        <input type="email" id="email-hero" placeholder="your@email.com" />
+        <button class="btn-primary" onclick="submitWaitlist('email-hero')">Get early access</button>
+      </div>
+      <p class="form-note">14-day free trial at launch. No credit card required.</p>
+    </div>
+    <div class="success-msg" id="success-hero">
+      You're on the list. We'll email you when DocPortal launches.
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- Social proof quote -->
+<section>
+  <div class="container">
+    <div class="quote-block">
+      <p><strong>"Feel like I spend half my time chasing documents..."</strong></p>
+      <p class="quote-source">— r/Accounting · 60+ upvotes · 1 month ago</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- How it works -->
+<section>
+  <div class="container">
+    <p class="section-label">How it works</p>
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+        </div>
+        <h3>One link per client</h3>
+        <p>Generate a unique upload URL for each client. They click, they upload — no login required.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <h3>Missing-doc dashboard</h3>
+        <p>See who has submitted and who hasn't. No more digging through 12 email threads.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        </div>
+        <h3>Auto reminders</h3>
+        <p>Scheduled nudge emails go out automatically. Polite at 14 days, firmer at 7, urgent at 2.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Before / After -->
+<section>
+  <div class="container">
+    <p class="section-label">Before vs after</p>
+    <div class="vs-grid">
+      <div class="vs-card before">
+        <div class="vs-label">Without DocPortal</div>
+        <ul>
+          <li><span class="dot"></span>Manual follow-up emails every week</li>
+          <li><span class="dot"></span>Hunting through threads to check who sent what</li>
+          <li><span class="dot"></span>Month-end delays because 3 clients are still missing</li>
+          <li><span class="dot"></span>40–60% of your time on admin, not billable work</li>
+        </ul>
+      </div>
+      <div class="vs-card after">
+        <div class="vs-label">With DocPortal</div>
+        <ul>
+          <li><span class="dot"></span>Clients upload via their personal link</li>
+          <li><span class="dot"></span>Dashboard shows every client's status at a glance</li>
+          <li><span class="dot"></span>Reminders send themselves on schedule</li>
+          <li><span class="dot"></span>You focus on the work that earns</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Pricing -->
+<section>
+  <div class="container">
+    <p class="section-label">Pricing</p>
+    <div class="pricing-card">
+      <div class="price-main">$29</div>
+      <div class="price-period">per month · unlimited clients</div>
+      <div class="price-trial">14 days free, no credit card</div>
+      <div class="price-includes">
+        Includes: upload portals · missing-doc dashboard · auto reminders · file archive
+      </div>
+    </div>
+    <p class="vs-competitors">TaxDome starts at $67/mo. Client Hub starts at $69/mo. DocPortal does one thing — document collection — at half the price.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Footer CTA -->
+<div class="footer-cta">
+  <div class="container">
+    <h2>Ready to stop chasing?</h2>
+    <div id="footer-form">
+      <div class="form-row">
+        <input type="email" id="email-footer" placeholder="your@email.com" style="max-width: 260px;" />
+        <button class="btn-primary" onclick="submitWaitlist('email-footer')">Join the waitlist</button>
+      </div>
+      <p class="form-note">Built for solo bookkeepers · $29/mo at launch</p>
+    </div>
+    <div class="success-msg" id="success-footer">
+      You're on the list. We'll email you when DocPortal is ready.
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <p>© 2026 DocPortal</p>
+    <p>bookkeeperdocportal.com</p>
+  </div>
+</footer>
+
+<script>
+  async function submitWaitlist(inputId) {
+    const email = document.getElementById(inputId).value.trim();
+    if (!email || !email.includes('@')) {
+      document.getElementById(inputId).focus();
+      return;
+    }
+
+    const isHero = inputId === 'email-hero';
+    const formId = isHero ? 'hero-form' : 'footer-form';
+    const successId = isHero ? 'success-hero' : 'success-footer';
+
+    document.getElementById(formId).style.display = 'none';
+    document.getElementById(successId).style.display = 'block';
+
+    // Send to Formspree — replace YOUR_FORM_ID with actual ID after creating form at formspree.io
+    try {
+      await fetch('https://formspree.io/f/xgonpwez', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ email, source: inputId })
+      });
+    } catch(e) {
+      console.log('Form submission:', email);
+    }
+  }
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+
+</body>
+</html>
