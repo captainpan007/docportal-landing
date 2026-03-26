@@ -1,0 +1,5 @@
+$env:HTTPS_PROXY = "http://127.0.0.1:7890"
+$env:HTTP_PROXY = "http://127.0.0.1:7890"
+conda activate base
+cd F:\claude开发项目\docportal
+python scripts/scrape-proadvisor.py

@@ -1,0 +1,8 @@
+# Scraped data (may contain personal info)
+data/*.csv
+data/*.json
+!data/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
